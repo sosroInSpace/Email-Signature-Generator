@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import EmailSignature from './EmailSignature.jsx';
-import logo from './images/okmg-icon.png';
+import logo from './images/okmg-new.png';
 import './App.css';
 
 class App extends Component {
@@ -14,19 +14,20 @@ class App extends Component {
       name: '',
       mobileNumber: '',
       jobTitle: '',
+      copied: false,
 
     };
 
+    this.iframe = React.createRef();
     this.handleChangeName = this.handleChangeName.bind(this);
     this.handleChangeTitle = this.handleChangeTitle.bind(this);
-
     this.handleMobile= this.handleMobile.bind(this);
-
+    this.handleClickCopy= this.handleClickCopy.bind(this);
   }
 
-  handleChangeName(event) {
-    this.setState({ name: event.target.value });
-  }
+    handleChangeName(event) {
+      this.setState({ name: event.target.value });
+    }
 
   handleChangeTitle(event){
     this.setState({ jobTitle: event.target.value});
@@ -36,7 +37,27 @@ class App extends Component {
     this.setState({ mobileNumber: event.target.value});
   }
 
+    getIframe() {
+    return this.iframe.current.iframe.current.contentDocument;
+  }
+
+    handleClickCopy(event) {
+    event.preventDefault();
+
+     const doc = this.getIframe();
+
+     console.log(doc);
+    
+     doc.execCommand("selectAll");
+     doc.execCommand("copy");
+
+     this.setState({'copied': true });
+  }
+
   render() {
+
+            const { copied } = this.state;
+
     return (
       <div className="App">
         <header className="App-header">
@@ -76,7 +97,16 @@ class App extends Component {
             name={this.state.name}
             mobileNumber={this.state.mobileNumber}
             jobTitle={this.state.jobTitle}
+            ref={this.iframe}
             />
+
+            <button
+            className="button copyButton"
+            onClick={this.handleClickCopy}
+            onBlur={this.handleBlurCopy}
+            >
+          { copied ? 'Copied!' : 'Copy' }
+          </button>
 
         </div>
       </div>
